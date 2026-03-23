@@ -7,10 +7,11 @@ import sys
 
 from time import sleep
 from yolink_token import YoLinkToken
-from yolink_devices import YoLinkFactory
+from yolink_devices import YoLinkFactory, YoLinkDoorDevice
 from yolink_consumer import YoLinkConsumer, YoLinkApi
 from influxdb_interface import InfluxDbClient
 from yolink_mqtt_client import YoLinkMqttClient, MqttClient
+from kognition_client import KognitionClient
 from logger import Logger
 log = Logger.getInstance().getLogger()
 
@@ -130,6 +131,20 @@ def main(argv):
     if localMqttEnabled:
         log.info("MQTT Broker Enabled")
         configure_local_mqtt_server(device_hash, config)
+
+    # Configure Kognition API integration for door sensors
+    kognition_config = config.get('kognition')
+    if kognition_config and kognition_config.get('url'):
+        log.info("Kognition API integration enabled: {}".format(
+            kognition_config['url']))
+        kognition = KognitionClient(kognition_config)
+        for device_id, device in device_hash.items():
+            if isinstance(device, YoLinkDoorDevice):
+                device.set_kognition_client(kognition)
+                log.debug("Kognition client set for door device: {}".format(
+                    device.get_name()))
+    else:
+        log.info("Kognition API integration not configured (add 'kognition' section to config)")
 
     log.debug(device_hash)
     input_q = queue.Queue(maxsize=Q_SIZE)
