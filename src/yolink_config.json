@@ -1,44 +1,57 @@
 {
-  "features": {
-    "localMQTT": false,
-    "influxDB": false
-  },
-  "yoLink": {
-    "apiv2": {
-      "apiUrl": "https://api.yosmart.com/open/yolink/v2/api",
-      "tokenUrl": "https://api.yosmart.com/open/yolink/token",
-      "uaId": "",
-      "secId": "",
-      "mqtt": {
-        "url": "api.yosmart.com",
-        "port": 8003,
-        "topic": "yl-home/{}/+/report"
-      }
-    }
-  },
-  "mqttBroker": {
-    "user": "",
-    "pasw": "",
-    "host": "localhost",
-    "port": 1883
-  },
-  "influxdb": {
-    "url": "http://localhost:8086/write",
-    "auth": {
-      "user": "",
-      "pasw": ""
+    "features": {
+        "localMQTT": false,
+        "influxDB": false
     },
-    "dbName": "homeassistant",
-    "sensors": [
-      {
-        "type": "temperature_humidity",
-        "deviceId": "d88b4c0100012345",
-        "name": "guest_bedroom",
-        "measurement": "weather",
-        "tagSet": "location=guest_bedroom",
-        "fieldSet": "temperature={},humidity={}"
-      }
-    ],
-    "__comment": "https://docs.influxdata.com/influxdb/v1.8/write_protocols/line_protocol_tutorial"
-  }
+    "yoLink": {
+        "apiv2": {
+            "apiUrl": "https://api.yosmart.com/open/yolink/v2/api",
+            "tokenUrl": "https://api.yosmart.com/open/yolink/token",
+            "uaId": "",
+            "secId": "",
+            "mqtt": {
+                "url": "api.yosmart.com",
+                "port": 8003,
+                "topic": "yl-home/{}/+/report"
+            }
+        }
+    },
+    "mqttBroker": {
+        "user": "",
+        "pasw": "",
+        "host": "localhost",
+        "port": 1883
+    },
+    "influxdb": {
+        "url": "http://localhost:8086/write",
+        "auth": {
+            "user": "",
+            "pasw": ""
+        },
+        "dbName": "homeassistant",
+        "sensors": [
+            {
+                "type": "temperature_humidity",
+                "deviceId": "d88b4c0100012345",
+                "name": "guest_bedroom",
+                "measurement": "weather",
+                "tagSet": "location=guest_bedroom",
+                "fieldSet": "temperature={},humidity={}"
+            }
+        ],
+        "__comment": "https://docs.influxdata.com/influxdb/v1.8/write_protocols/line_protocol_tutorial"
+    },
+    "kognition": {
+        "url": "http://your-instance.kognition.ai",
+        "apiKey": "your-service-api-key",
+        "timeoutSeconds": 10,
+        "deviceMap": {
+            "d88b4c0100012345": {
+                "sensorId": "couchdb-sensor-doc-id",
+                "sensorName": "Front Door",
+                "cameraId": "associated-camera-doc-id",
+                "locationId": "location-doc-id"
+            }
+        }
+    }
 }

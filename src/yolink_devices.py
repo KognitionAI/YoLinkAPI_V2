@@ -152,6 +152,11 @@ class YoLinkDoorDevice(YoLinkDevice):
     """
     def __init__(self, device_info):
         super().__init__(device_info)
+        self.kognition_client = None
+
+    def set_kognition_client(self, client):
+        """Set the Kognition API client for sending sensor updates."""
+        self.kognition_client = client
 
     def is_open(self):
         return EVENT_STATE[self.get_device_data()['state']] == DoorEvent.OPEN
@@ -177,14 +182,29 @@ class YoLinkDoorDevice(YoLinkDevice):
             self.get_event()
         ))
 
-        if event:
-            return self.mqtt_server.publish(self.topic, self.get_event())
-        else:
+        if not event:
             log.info("Not supported event: {}".format(
                 self.get_device_data()
             ))
+            return 0
 
-        return 0
+        rc = 0
+
+        # Publish to local MQTT if configured
+        if self.mqtt_server:
+            rc = self.mqtt_server.publish(self.topic, self.get_event())
+
+        # Send to Kognition API if configured
+        if self.kognition_client and self.kognition_client.is_configured():
+            alert_type = self.get_device_data().get('alertType')
+            state = self.get_device_data().get('state', '')
+            kg_rc = self.kognition_client.send_sensor_update(
+                self.get_id(), state, alert_type)
+            if kg_rc != 0:
+                log.warning("Kognition sensor update failed for device {}".format(
+                    self.get_id()))
+
+        return rc
 
 
 class YoLinkTempDevice(YoLinkDevice):
