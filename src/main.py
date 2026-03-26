@@ -119,7 +119,7 @@ def main(argv):
             device_name
         ))
 
-        if (device_type == 'Hub' or device_type == 'Siren'):
+         if device_type in ('Hub', 'Siren', 'SpeakerHub'):
             continue
 
         yolink_device = YoLinkFactory(device_type, device)
