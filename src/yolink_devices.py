@@ -76,6 +76,8 @@ class YoLinkDevice(object):
         # Device data from each MQTT event received
         # from YoLink brokers
         self.event_payload = {}
+        self.mqtt_server = None
+        self.topic = None
 
     def get_id(self):
         return self.id
